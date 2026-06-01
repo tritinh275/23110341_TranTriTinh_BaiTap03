@@ -11,17 +11,22 @@ function App() {
   useEffect(() => {
     const fetchAccount = async () => {
       setAppLoading(true);
-      const res = await axios.get(`/v1/api/account`);
-      if (res && !res.message) {
-        setAuth({
-          isAuthenticated: true,
-          user: {
-            email: res.email,
-            name: res.name
-          }
-        })
+      try {
+        const res = await axios.get(`/v1/api/account`);
+        if (res && !res.message) {
+          setAuth({
+            isAuthenticated: true,
+            user: {
+              email: res.email,
+              name: res.name
+            }
+          })
+        }
+      } catch (error) {
+        console.log(">>> Backend offline, không thể lấy thông tin tài khoản:", error);
+      } finally {
+        setAppLoading(false);
       }
-      setAppLoading(false);
     }
     fetchAccount();
   }, [])

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table } from 'antd';
+import { Table, notification } from 'antd';
 import { getUserApi } from '../util/api';
 
 const UserPage = () => {
@@ -10,21 +10,38 @@ const UserPage = () => {
             const res = await getUserApi();
             if (res && !res.message) {
                 setDataSource(res);
+            } else {
+                notification.error({
+                    message: "Unauthorized",
+                    description: res?.message ?? "Error"
+                });
             }
         }
         fetchUser();
     }, []);
 
     const columns = [
-        { title: 'ID', dataIndex: '_id', key: '_id' },
-        { title: 'Name', dataIndex: 'name', key: 'name' },
-        { title: 'Email', dataIndex: 'email', key: 'email' },
-        { title: 'Role', dataIndex: 'role', key: 'role' },
+        {
+            title: 'Id',
+            dataIndex: '_id',
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+        },
+        {
+            title: 'Name',
+            dataIndex: 'name',
+        },
+        {
+            title: 'Role',
+            dataIndex: 'role',
+        },
     ];
 
     return (
         <div style={{ padding: '30px' }}>
-            <Table dataSource={dataSource} columns={columns} rowKey={"_id"} />
+            <Table bordered dataSource={dataSource} columns={columns} rowKey={"_id"} />
         </div>
     );
 };

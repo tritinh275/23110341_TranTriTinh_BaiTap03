@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { UsergroupAddOutlined, HomeOutlined, SettingOutlined, LoginOutlined } from '@ant-design/icons';
+import { UsergroupAddOutlined, HomeOutlined, SettingOutlined } from '@ant-design/icons';
 import { Menu } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/auth.context';
@@ -13,45 +13,40 @@ const Header = () => {
         setCurrent(e.key);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem("access_token");
-        setAuth({
-            isAuthenticated: false,
-            user: { email: "", name: "" }
-        })
-        navigate("/");
-    }
-
     const items = [
         {
-            label: <Link to={'/'}>Trang chủ</Link>,
+            label: <Link to={"/"}>Home Page</Link>,
             key: 'home',
             icon: <HomeOutlined />,
         },
-        {
-            label: <Link to={'/user'}>Users</Link>,
+        ...(auth.isAuthenticated ? [{
+            label: <Link to={"/user"}>Users</Link>,
             key: 'user',
             icon: <UsergroupAddOutlined />,
-        },
-        // Nếu chưa đăng nhập thì hiện Login
-        ...(!auth.isAuthenticated ? [{
-            label: <Link to={'/login'}>Đăng nhập</Link>,
-            key: 'login',
-            icon: <LoginOutlined />,
-            style: { marginLeft: 'auto' }
-        }] : [{
-            // Nếu đã đăng nhập thì hiện tên User và nút Logout
-            label: `Welcome ${auth.user.name}`,
+        }] : []),
+        {
+            label: `Welcome ${auth?.user?.email ?? ""}`,
             key: 'SubMenu',
             icon: <SettingOutlined />,
-            style: { marginLeft: 'auto' },
             children: [
-                {
-                    label: <span onClick={() => handleLogout()}>Đăng xuất</span>,
+                ...(auth.isAuthenticated ? [{
+                    label: <span onClick={() => {
+                        localStorage.clear("access_token");
+                        setAuth({
+                            isAuthenticated: false,
+                            user: { email: "", name: "" }
+                        });
+                        navigate("/");
+                    }}>Đăng xuất</span>,
                     key: 'logout',
-                },
+                }] : [
+                    {
+                        label: <Link to={"/login"}>Đăng nhập</Link>,
+                        key: 'login',
+                    }
+                ]),
             ],
-        }]),
+        },
     ];
 
     return <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />;

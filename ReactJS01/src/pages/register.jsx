@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button, Form, Input, notification, Row, Col, Divider } from 'antd';
 import { createUserApi } from '../util/api';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 const RegisterPage = () => {
     const navigate = useNavigate();
@@ -10,40 +11,89 @@ const RegisterPage = () => {
         const { name, email, password } = values;
         const res = await createUserApi(name, email, password);
 
-        if (res && res._id) {
+        if (res) {
             notification.success({
                 message: "CREATE USER",
-                description: "Đăng ký người dùng thành công"
+                description: "Success"
             });
             navigate("/login");
         } else {
             notification.error({
                 message: "CREATE USER",
-                description: "Có lỗi xảy ra"
+                description: "error"
             });
         }
     };
 
     return (
-        <div style={{ padding: '50px' }}>
-            <Row justify="center">
-                <Col span={12}>
-                    <Divider>Đăng ký tài khoản</Divider>
-                    <Form layout='vertical' onFinish={onFinish}>
-                        <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+        <Row justify={"center"} style={{ marginTop: "30px" }}>
+            <Col xs={24} md={16} lg={8}>
+                <fieldset style={{
+                    padding: "15px",
+                    margin: "5px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px"
+                }}>
+                    <legend>Đăng Ký Tài Khoản</legend>
+                    <Form
+                        name="basic"
+                        onFinish={onFinish}
+                        autoComplete="off"
+                        layout='vertical'
+                    >
+                        <Form.Item
+                            label="Email"
+                            name="email"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your email!',
+                                },
+                            ]}
+                        >
                             <Input />
                         </Form.Item>
-                        <Form.Item label="Email" name="email" rules={[{ required: true, type: 'email' }]}>
-                            <Input />
-                        </Form.Item>
-                        <Form.Item label="Password" name="password" rules={[{ required: true }]}>
+
+                        <Form.Item
+                            label="Password"
+                            name="password"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your password!',
+                                },
+                            ]}
+                        >
                             <Input.Password />
                         </Form.Item>
-                        <Button type="primary" htmlType="submit">Register</Button>
+
+                        <Form.Item
+                            label="Name"
+                            name="name"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your name!',
+                                },
+                            ]}
+                        >
+                            <Input />
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Submit
+                            </Button>
+                        </Form.Item>
                     </Form>
-                </Col>
-            </Row>
-        </div>
+                    <Link to={"/"}><ArrowLeftOutlined /> Quay lại trang chủ</Link>
+                    <Divider />
+                    <div style={{ textAlign: "center" }}>
+                        Đã có tài khoản? <Link to={"/login"}>Đăng nhập</Link>
+                    </div>
+                </fieldset>
+            </Col>
+        </Row>
     );
 };
 
